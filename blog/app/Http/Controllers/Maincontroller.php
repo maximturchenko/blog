@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 
 use App\Posts;
+use Illuminate\Support\Facades\Auth;
 
 class Maincontroller extends Controller
 {
@@ -29,11 +30,22 @@ class Maincontroller extends Controller
      */
     public function store(Request $request)
     {
-        $path = $request->image->store('images', 's3');
 
-      /*  Posts::create(
-          request(array('lastname','firstname','middlename','phone','email'))
-        );*/
+        if ($request->hasFile('image')) {
+        $this->validate($request, [
+            'image' => 'image|nullable|max:1999'
+        ]);
+          $filenameWithExt = $request->file('image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $fileNameToStore = $filename.'_'.time().'.'.$extension;
+            $path = $request->file('image')->storeAs('images/posts', $fileNameToStore,'public');
+        }
+       $post = new Posts;
+        $post->user_id = Auth::id();
+        $post->content = $request->content;
+        $post->image = $path;
+        $post->save();
 
         return redirect('/');
     }

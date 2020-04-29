@@ -91,6 +91,7 @@
                     filebrowserUploadMethod: 'form'
                 });
             </script>
+
         </div>
     </body>
 </html>

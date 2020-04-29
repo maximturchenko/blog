@@ -28,6 +28,5 @@ Route::put('/posts/{post}', 'Maincontroller@update')->name('home');
 
 
 Route::post('ckeditor/image_upload', 'CKEditorController@upload')->name('upload');
-
-
+Route::resource('editor', 'CKEditorController@index');
 
