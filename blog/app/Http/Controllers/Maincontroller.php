@@ -18,8 +18,8 @@ class Maincontroller extends Controller
     public function index()
     {
         $posts = Posts::all();
-        $posts = Posts::paginate(3);
-         return view('posts.posts',  compact('posts'));
+        $posts = Posts::paginate(2);
+        return view('posts.posts',  compact('posts'));
     }
 
     /**
@@ -30,21 +30,24 @@ class Maincontroller extends Controller
      */
     public function store(Request $request)
     {
-
-        if ($request->hasFile('image')) {
         $this->validate($request, [
+            'title' => 'required|unique:posts|max:255',
+            'content' => 'required',
             'image' => 'image|nullable|max:1999'
         ]);
+
+        $post = new Posts;
+        if ($request->hasFile('image')) {
           $filenameWithExt = $request->file('image')->getClientOriginalName();
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('image')->getClientOriginalExtension();
             $fileNameToStore = $filename.'_'.time().'.'.$extension;
             $path = $request->file('image')->storeAs('images/posts', $fileNameToStore,'public');
+            $post->image = $path;
         }
-       $post = new Posts;
+        $post->title = $request->title;
         $post->user_id = Auth::id();
         $post->content = $request->content;
-        $post->image = $path;
         $post->save();
 
         return redirect('/');

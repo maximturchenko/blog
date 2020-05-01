@@ -28,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
 
-        Gate::define('add-message', function ($user) {
+        Gate::define('add-post', function ($user) {
             if($user->exists){
                 return true;
             }else{
@@ -37,9 +37,9 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('update-post', function ($user, Posts $post) {
-            return $user->id == $post->user_id;
+            return $user->id == 1 or $user->id == 2;
         });
-        Gate::define('delete-message', function ($user, Posts $post) {
+        Gate::define('delete-post', function ($user, Posts $post) {
             return $user->id == $post->user_id;
         });
     }

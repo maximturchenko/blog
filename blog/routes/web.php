@@ -17,16 +17,22 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 
-
 Route::get('/', 'Maincontroller@index')->name('home');
 Route::get('/post/add', 'Maincontroller@create')->name('add');
 Route::post('/posts', 'Maincontroller@store')->name('addpost');
 Route::get('/post/{post}', 'Maincontroller@show')->name('show');
-Route::get('/post/{post}/edit', 'Maincontroller@edit')->name('home');
-Route::get('/post/{post}/delete', 'Maincontroller@delete')->name('home');
-Route::put('/posts/{post}', 'Maincontroller@update')->name('home');
+Route::get('/post/{post}/edit', 'Maincontroller@edit')->name('edit');
+Route::get('/post/{post}/delete', 'Maincontroller@delete')->name('delete');
+Route::put('/posts/{post}', 'Maincontroller@update')->name('update');
 
 
-Route::post('ckeditor/image_upload', 'CKEditorController@upload')->name('upload');
-Route::resource('editor', 'CKEditorController@index');
 
+Route::group(['prefix' => ''],function () {
+    Route::post('/posts', 'MainController@store')
+        ->name('addpost')
+        ->middleware('can:add-post');
+
+    Route::put('/posts/{post}', 'MainController@update')
+        ->name('update_message')
+        ->middleware('can:update-post,post');
+});
